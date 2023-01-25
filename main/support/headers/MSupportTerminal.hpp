@@ -5,6 +5,7 @@
 */
 
 #include <string_view>
+#include <algorithm>
 #include <optional>
 
 /**
@@ -57,7 +58,7 @@
 /**
  * @brief Class - Support basic functionality for outpusts in terminal duting inicializations
 */
-class MainSupport final
+class MainSupportTerminal final
 {
     private:
         /** @brief */
@@ -71,7 +72,7 @@ class MainSupport final
         */
         inline constexpr void _set_argument_bit(uint8_t mask)
         {
-            _term_args.argument_active_bit |= (mask);
+            _term_args.argument_active_bit |= mask;
         }
 
     public:
@@ -87,6 +88,5 @@ class MainSupport final
          * @return Imlicite value for main function in linux envrioment
         */
         inline terminal_arguments && get_terminal_args() { return std::move(_term_args); }
-
 
 };

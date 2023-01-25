@@ -1,4 +1,3 @@
-#pragma once
 
 /**
  * @brief Headers for C++ build-in for libraries
@@ -15,7 +14,7 @@
 /**
  * @brief Headers for .hpp files
 */
-#include "../headers/MSupport.hpp"
+#include "../headers/MSupportTerminal.hpp"
 
 /**
  * @brief Pre-proccesor defintions
@@ -44,7 +43,7 @@ inline constexpr uint8_t __arg_index = (uint8_t)1;
 /**
  * 
 */
-void MainSupport::parse_terminal_arguments(char ** args)
+void MainSupportTerminal::parse_terminal_arguments(char ** args)
 {
     if (nullptr != args[__arg_index])
     {

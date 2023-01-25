@@ -6,23 +6,43 @@
 
 #IncludeRegexTransform: 
 
-/home/oliver/my_proj/SCS/main/server/headers/MSupport.hpp
+/home/oliver/my_proj/SCS/main/network/Base/headers/NetworkBase.hpp
+sys/socket.h
+-
+unistd.h
+-
+../../../support/headers/MSupportError.hpp
+/home/oliver/my_proj/SCS/main/support/headers/MSupportError.hpp
+
+/home/oliver/my_proj/SCS/main/server/src/main.cpp
+iostream
+-
+../../support/headers/MSupportTerminal.hpp
+/home/oliver/my_proj/SCS/main/support/headers/MSupportTerminal.hpp
+../../network/Base/headers/NetworkBase.hpp
+/home/oliver/my_proj/SCS/main/network/Base/headers/NetworkBase.hpp
+
+/home/oliver/my_proj/SCS/main/support/headers/MSupportError.hpp
+string.h
+-
+errno.h
+-
+
+/home/oliver/my_proj/SCS/main/support/headers/MSupportTerminal.hpp
 string_view
+-
+algorithm
 -
 optional
 -
 stdint.h
 -
 
-/home/oliver/my_proj/SCS/main/server/src/MSupport.cpp
-../headers/MSupport.hpp
-/home/oliver/my_proj/SCS/main/server/headers/MSupport.hpp
+/home/oliver/my_proj/SCS/main/support/src/MSupportError.cpp
 
-/home/oliver/my_proj/SCS/main/server/src/main.cpp
-iostream
--
-../headers/MSupport.hpp
-/home/oliver/my_proj/SCS/main/server/headers/MSupport.hpp
+/home/oliver/my_proj/SCS/main/support/src/MSupportTerminal.cpp
+../headers/MSupportTerminal.hpp
+/home/oliver/my_proj/SCS/main/support/headers/MSupportTerminal.hpp
 
 /home/oliver/my_proj/SCS/main/thread/src/ThreadSupport.cpp
 

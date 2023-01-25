@@ -4,12 +4,9 @@ project(SCS)
 
 set(CMAKE_CXX_STANDARD 17)
 
-file(GLOB hehSCXS CONFIGURE_DEPENDS
-     "../main/server/headers/*.hpp"
-     "../main/client/headers/*.hpp"
-     "../main/thread/headers/*.hpp"
-     "../main/network/headers/*.hpp"
-     "../main/support/headers/*.hpp"
+add_compile_options(-Werror -Wall -Wextra) 
+#-Wconversion
+file(GLOB hehSCXS
      "../main/server/src/*.cpp"
      "../main/client/src/*.cpp"
      "../main/thread/src/*.cpp"

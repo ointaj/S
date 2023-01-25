@@ -15,7 +15,8 @@
  * @brief Headers for .hpp files
 */
 
-#include "../headers/MSupport.hpp"
+#include "../../support/headers/MSupportTerminal.hpp"
+#include "../../network/Base/headers/NetworkBase.hpp"
 
 /**
  * @brief Pre-proccesor defintions
@@ -38,7 +39,7 @@
  * @brief Compile time checks
 */
     #if OS_SUPPORT__COMPILER_VALUE
-        #if GCC__COMPILER_CHECK
+        #ifdef GCC__COMPILER_CHECK
             #if CPP_STANDART_VERSION__COMPILER_CHECK
                 #error "WRONG VERSION OF C++ STANDART HAS BEEN CHOOSED"
             #endif // CPP_STANDART_VERSION__COMPILER_CHECK
@@ -58,9 +59,10 @@
 int main(int argc,
          char ** args)
 {
+    (void)argc;
     terminal_arguments full_terminal_argumensts;
     {
-        MainSupport a;
+        MainSupportTerminal a;
         a.parse_terminal_arguments(args);
         full_terminal_argumensts = std::move(a.get_terminal_args());
     }

@@ -4,8 +4,9 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/oliver/my_proj/SCS/main/server/src/MSupport.cpp" "/home/oliver/my_proj/SCS/build/output/build-server/CMakeFiles/SCS.dir/home/oliver/my_proj/SCS/main/server/src/MSupport.cpp.o"
   "/home/oliver/my_proj/SCS/main/server/src/main.cpp" "/home/oliver/my_proj/SCS/build/output/build-server/CMakeFiles/SCS.dir/home/oliver/my_proj/SCS/main/server/src/main.cpp.o"
+  "/home/oliver/my_proj/SCS/main/support/src/MSupportError.cpp" "/home/oliver/my_proj/SCS/build/output/build-server/CMakeFiles/SCS.dir/home/oliver/my_proj/SCS/main/support/src/MSupportError.cpp.o"
+  "/home/oliver/my_proj/SCS/main/support/src/MSupportTerminal.cpp" "/home/oliver/my_proj/SCS/build/output/build-server/CMakeFiles/SCS.dir/home/oliver/my_proj/SCS/main/support/src/MSupportTerminal.cpp.o"
   "/home/oliver/my_proj/SCS/main/thread/src/ThreadSupport.cpp" "/home/oliver/my_proj/SCS/build/output/build-server/CMakeFiles/SCS.dir/home/oliver/my_proj/SCS/main/thread/src/ThreadSupport.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
