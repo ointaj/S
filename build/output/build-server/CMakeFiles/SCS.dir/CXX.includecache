@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/oliver/my_proj/SCS/main/server/headers/MSupport.hpp
+string_view
+-
+optional
+-
+stdint.h
+-
+
+/home/oliver/my_proj/SCS/main/server/src/MSupport.cpp
+../headers/MSupport.hpp
+/home/oliver/my_proj/SCS/main/server/headers/MSupport.hpp
+
+/home/oliver/my_proj/SCS/main/server/src/main.cpp
+iostream
+-
+../headers/MSupport.hpp
+/home/oliver/my_proj/SCS/main/server/headers/MSupport.hpp
+
+/home/oliver/my_proj/SCS/main/thread/src/ThreadSupport.cpp
+

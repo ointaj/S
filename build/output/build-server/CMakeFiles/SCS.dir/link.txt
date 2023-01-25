@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/SCS.dir/home/oliver/my_proj/SCS/main/server/src/MSupport.cpp.o CMakeFiles/SCS.dir/home/oliver/my_proj/SCS/main/server/src/main.cpp.o CMakeFiles/SCS.dir/home/oliver/my_proj/SCS/main/thread/src/ThreadSupport.cpp.o  -o SCS 

@@ -1,0 +1,3 @@
+/home/oliver/my_proj/SCS/build/output/build-server/CMakeFiles/rebuild_cache.dir
+/home/oliver/my_proj/SCS/build/output/build-server/CMakeFiles/edit_cache.dir
+/home/oliver/my_proj/SCS/build/output/build-server/CMakeFiles/SCS.dir
