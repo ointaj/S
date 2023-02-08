@@ -13,7 +13,9 @@ CMAKE=$?
 
 if [[ ${CMAKE} != 0 ]];
 then
+    echo -en "\033[0;31m"
     echo "ERROR - cmake"
+    echo -en "\033[0m"
     exit 2
 fi
 
@@ -21,11 +23,15 @@ make -C ./output/build-server/
 MAKE=$?
 
 if [[ ${MAKE} != 0 ]];
-then 
+then
+
+    echo -en "\033[0;31m"
     echo "ERROR - make"
+    echo -en "\033[0m"
     exit 3
 fi
 
-mv ./output/build-server/server ./out/
-
+strip ./output/build-server/SCS
+echo -en "\033[0;32m"
 echo "SUCCESS"
+echo -en "\033[0m"
