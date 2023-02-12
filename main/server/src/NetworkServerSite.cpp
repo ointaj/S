@@ -32,7 +32,6 @@
 /**
  * @brief Local/Global definitons
 */
-
 std::atomic_bool NetworkServerSide::_interrupt_singal_flag = false;
 std::atomic_bool NetworkServerSide::_termination_singal_flag = false;
 
@@ -54,7 +53,10 @@ void NetworkServerSide::client_registration()
             std::lock_guard<std::mutex> accept_lock(_access_to_clients);
             
             _id_of_clients_offset++;
-            
+            _clients.emplace_back(std::make_unique<client_connection_info__SERVER_SIDE>(
+                                                     std::thread([this]() { this->_client_handle(); }),
+                                                     _id_of_clients_offset,
+                                                    new_client.socket_fd));
             // add to container and will run
         }
     }
@@ -209,4 +211,10 @@ void NetworkServerSide::_exit_clients(std::string && data)
             // effaciancy > memory in this case, i guess, so no shrink... we would loose preallocated blocks
         }
     }
+}
+
+
+void NetworkServerSide::_client_handle()
+{
+
 }
