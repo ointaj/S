@@ -82,6 +82,10 @@
             uint8_t _active_command : ___sc_COUNT;
 
         public:
+            terminal_arguments__server_maintanance() = default;
+            terminal_arguments__server_maintanance(std::string && data)
+                                                    : _terminal_input(std::move(data))
+                                                    {}
             /**
              * @brief Setter member function for input from terminal
              * @param data Rvalue reference to data from terminal - use std::move
@@ -161,9 +165,8 @@ class ServerTerminalSupport final
         ServerTerminalSupport() = default;
 
         explicit ServerTerminalSupport(std::string && input_data)
-        {
-            _arguments.set_terminal_input(std::move(input_data));
-        }
+                                        : _arguments(std::move(input_data))
+        {}
 
         inline void set_terminal_input(std::string && input_data)
         {
