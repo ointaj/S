@@ -83,9 +83,10 @@
 
         public:
             terminal_arguments__server_maintanance() = default;
-            terminal_arguments__server_maintanance(std::string && data)
-                                                    : _terminal_input(std::move(data))
-                                                    {}
+            
+            explicit terminal_arguments__server_maintanance(std::string && data)
+                                                        : _terminal_input(std::move(data))
+                                                        {}
             /**
              * @brief Setter member function for input from terminal
              * @param data Rvalue reference to data from terminal - use std::move
