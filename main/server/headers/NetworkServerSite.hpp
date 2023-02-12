@@ -7,6 +7,7 @@
 #include <vector>
 #include <atomic>
 #include <algorithm>
+#include <memory>
 
 /**
  * @brief Headers for C build-in for libraries
@@ -22,6 +23,7 @@
 
 #include "../../network/Base/headers/NetworkBase.hpp"
 #include "../../thread/header/ThreadConfig.hpp"
+#include "../../support/headers/MSupportTerminalServerMaintenance.hpp"
 
 /**
  * @brief Pre-proccesor defintions
@@ -44,9 +46,10 @@ class NetworkServerSide final : public iNetworkBase
 {
     private:
         /** @brief Container of client info */
-        std::vector<client_connection_info__SERVER_SIDE> _clients;
+        std::vector<std::unique_ptr<client_connection_info__SERVER_SIDE>> _clients;
         /** @brief Mutex for accesing to client info */
         std::mutex _access_to_clients;
+
         /** @brief Offset for client id */
         int _id_of_clients_offset;
     
@@ -101,7 +104,9 @@ class NetworkServerSide final : public iNetworkBase
          * @brief Print client information
          * @param data Data about clients that should be printed to terminal
         */
-        void _print_client(std::string_view data);
+        void _print_client(std::string && data);
+
+        void _exit_clients(std::string && data);
     
     private:
         void _broadcast_message();

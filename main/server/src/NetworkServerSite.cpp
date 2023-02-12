@@ -1,4 +1,4 @@
-    /**
+/**
  * @brief Headers for C++ build-in for libraries
 */
 
@@ -15,6 +15,7 @@
 */
 
 #include "../headers/NetworkServerSite.hpp"
+#include "../../support/headers/MSupportTerminal_I_O.hpp"
 
 /**
  * @brief Pre-proccesor defintions
@@ -82,37 +83,130 @@ void NetworkServerSide::init_signal()
 
 void NetworkServerSide::_exit_connected_clients()
 {
+    std::lock_guard<std::mutex> exit_lock(_access_to_clients);
     if (_interrupt_singal_flag)
     {
         _iterate_clients(
-            [] (auto && client) 
+            [] (auto const& client) 
             {
-                if (client.client_thread.joinable())
+                if (nullptr != client)
                 {
-                    client.client_thread.join(); 
-                }   
+                    if (client->client_thread.joinable())
+                    {
+                        client->client_thread.join(); 
+                    }
+                }
             }
         );
     }
     else if (_termination_singal_flag)
     {
         _iterate_clients(
-            [] (auto && client) 
+            [] (auto const& client) 
             {
-                client.client_thread.detach();
+                if (nullptr != client)
+                {
+                    client->client_thread.detach();
+                }
             }
         );
     }
-    else // runtime asserts ?
+    else
     {
-
+        assert(false);
     }
 }
 
-void NetworkServerSide::_print_client(std::string_view data)
+void NetworkServerSide::_print_client(std::string && data)
 {
-    (void)data;
     {
         std::lock_guard<std::mutex> print_lock(_access_to_clients);
+        ServerTerminalSupport terminal_support(std::move(data));
+        terminal_support.parse_terminal_input();
+        if (terminal_support->chcek_command_bit(__PRINT_COMMAND_BITMASK))
+        {
+            IO::___clients data_to_print;
+            auto ids = terminal_support->get_all_ids();
+
+            for (auto id : ids)
+            {
+                if ((_clients.size() >= id) && (0 < id))
+                {
+                    const auto index = id - 1;
+                    auto const& client = _clients.at(index);
+                    if ((nullptr != client)
+                         && (id == client->client_id)
+                         && (std::nullopt != client->client_name))
+                    {
+                        data_to_print.emplace_back(std::make_pair(client->client_id, client->client_name->c_str()));
+                    }
+                }
+
+            }
+            if (!data_to_print.empty())
+            {
+                MSupportIO::terminal_ouput_clients(data_to_print);
+            }
+        }
+        else if (terminal_support->chcek_command_bit(__PRINT_ALL_COMMAND_BITMASK))
+        {
+             IO::___all_clients data_to_print;
+            _iterate_clients(
+                [&data_to_print](auto const& client)
+                {
+                    if ((nullptr != client) && (std::nullopt != client->client_name))
+                    {
+                        data_to_print.emplace_back(client->client_name->c_str());
+                    }
+                });
+            if (!data_to_print.empty())
+            {
+                MSupportIO::terminal_ouput_clients(data_to_print);
+            }
+        }
+        else
+        {
+            assert(false);
+        }
+    }
+}
+
+void NetworkServerSide::_exit_clients(std::string && data)
+{
+    {  
+        std::lock_guard<std::mutex> exit_lock(_access_to_clients);
+        ServerTerminalSupport terminal_support(std::move(data));
+        terminal_support.parse_terminal_input();
+        if (terminal_support->chcek_command_bit(__EXIT_COMMAND_BITMASK))
+        {
+            auto ids = terminal_support->get_all_ids();
+            for (auto id : ids)
+            {
+                auto index = id - 1;
+                auto & client = _clients.at(index);
+                if ((nullptr != client) && (id == client->client_id))
+                {
+                    client->client_thread.detach();
+                    // maybe some sleep ?
+                    client.release();
+                }
+            }
+        }
+        else if (terminal_support->chcek_command_bit(__EXIT_ALL_COMMAND_BITMASK))
+        {
+           _iterate_clients(
+            [] (auto & client) 
+            {
+                if (nullptr != client)
+                {
+                    client->client_thread.detach();
+                }
+            });
+            _id_of_clients_offset = 0;
+            // Reset clients (de-allocated std::unique_ptr)
+            _clients.clear();
+            // call shrin_to_fit ? memory will be saved but effeciancy will be lost
+            // effaciancy > memory in this case, i guess, so no shrink... we would loose preallocated blocks
+        }
     }
 }
