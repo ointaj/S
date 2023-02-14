@@ -4,7 +4,7 @@
  * @brief Headers for C++ build-in for libraries
 */
 
-#include <vector>
+#include <unordered_map>
 #include <atomic>
 #include <algorithm>
 #include <memory>
@@ -45,13 +45,13 @@
 class NetworkServerSide final : public iNetworkBase
 {
     private:
-        /** @brief Container of client info */
-        std::vector<std::unique_ptr<client_connection_info__SERVER_SIDE>> _clients;
+        /** @brief Map of client info */
+        std::unordered_map<____user_id_type, client_connection_info__SERVER_SIDE> _clients;
         /** @brief Mutex for accesing to client info */
         std::mutex _access_to_clients;
 
         /** @brief Offset for client id */
-        int _id_of_clients_offset;
+        ____user_id_type _id_of_clients_offset;
     
     private:
         /** @brief Atomic flag for interrupt signal */

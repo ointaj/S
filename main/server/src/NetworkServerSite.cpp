@@ -51,13 +51,10 @@ void NetworkServerSide::client_registration()
         
         {
             std::lock_guard<std::mutex> accept_lock(_access_to_clients);
-            
-            _id_of_clients_offset++;
-            _clients.emplace_back(std::make_unique<client_connection_info__SERVER_SIDE>(
-                                                     std::thread([this]() { this->_client_handle(); }),
-                                                     _id_of_clients_offset,
-                                                    new_client.socket_fd));
-            // add to container and will run
+            _clients.emplace(std::piecewise_construct,
+                             std::forward_as_tuple(++_id_of_clients_offset),
+                             std::forward_as_tuple(std::thread([this]() { this->_client_handle(); }), new_client.socket_fd));
+
         }
     }
     _exit_connected_clients();
@@ -83,20 +80,18 @@ void NetworkServerSide::init_signal()
     signal(SIGTERM, NetworkServerSide::_termination_signal_handler);   
 }
 
-void NetworkServerSide::_exit_connected_clients()
+void NetworkServerSide::_exit_connected_clients()   
 {
     std::lock_guard<std::mutex> exit_lock(_access_to_clients);
     if (_interrupt_singal_flag)
     {
         _iterate_clients(
-            [] (auto const& client) 
+            [] (auto & client) 
             {
-                if (nullptr != client)
+                auto & ref_to_client = client.second;
+                if (ref_to_client.client_thread.joinable())
                 {
-                    if (client->client_thread.joinable())
-                    {
-                        client->client_thread.join(); 
-                    }
+                    ref_to_client.client_thread.join();
                 }
             }
         );
@@ -104,12 +99,9 @@ void NetworkServerSide::_exit_connected_clients()
     else if (_termination_singal_flag)
     {
         _iterate_clients(
-            [] (auto const& client) 
+            [] (auto & client) 
             {
-                if (nullptr != client)
-                {
-                    client->client_thread.detach();
-                }
+                client.second.client_thread.detach();
             }
         );
     }
@@ -132,15 +124,14 @@ void NetworkServerSide::_print_client(std::string && data)
 
             for (auto id : ids)
             {
-                if ((_clients.size() >= id) && (0 < id))
+                if ((_clients.size() >= id) && ((____user_id_type)0 < id))
                 {
-                    const auto index = id - 1;
-                    auto const& client = _clients.at(index);
-                    if ((nullptr != client)
-                         && (id == client->client_id)
-                         && (std::nullopt != client->client_name))
+                    if (auto client = _clients.find(id); _clients.end() != client)
                     {
-                        data_to_print.emplace_back(std::make_pair(client->client_id, client->client_name->c_str()));
+                        if (std::nullopt != client->second.client_name)
+                        {
+                            data_to_print.emplace_back(std::make_pair(client->first, client->second.client_name->c_str()));
+                        }
                     }
                 }
 
@@ -156,9 +147,9 @@ void NetworkServerSide::_print_client(std::string && data)
             _iterate_clients(
                 [&data_to_print](auto const& client)
                 {
-                    if ((nullptr != client) && (std::nullopt != client->client_name))
+                    if (std::nullopt != client.second.client_name)
                     {
-                        data_to_print.emplace_back(client->client_name->c_str());
+                        data_to_print.emplace_back(client.second.client_name->c_str());
                     }
                 });
             if (!data_to_print.empty())
@@ -184,13 +175,13 @@ void NetworkServerSide::_exit_clients(std::string && data)
             auto ids = terminal_support->get_all_ids();
             for (auto id : ids)
             {
-                auto index = id - 1;
-                auto & client = _clients.at(index);
-                if ((nullptr != client) && (id == client->client_id))
+                if ((_clients.size() >= id) && ((____user_id_type)0 < id))
                 {
-                    client->client_thread.detach();
-                    // maybe some sleep ?
-                    client.release();
+                    if (auto client = _clients.find(id); _clients.end() != client)
+                    {
+                        client->second.client_thread.detach();
+                        _clients.erase(client->first);
+                    }
                 }
             }
         }
@@ -199,16 +190,10 @@ void NetworkServerSide::_exit_clients(std::string && data)
            _iterate_clients(
             [] (auto & client) 
             {
-                if (nullptr != client)
-                {
-                    client->client_thread.detach();
-                }
+                client.second.client_thread.detach();
             });
             _id_of_clients_offset = 0;
-            // Reset clients (de-allocated std::unique_ptr)
             _clients.clear();
-            // call shrin_to_fit ? memory will be saved but effeciancy will be lost
-            // effaciancy > memory in this case, i guess, so no shrink... we would loose preallocated blocks
         }
     }
 }

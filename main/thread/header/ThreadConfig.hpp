@@ -50,12 +50,10 @@ struct client_connection_info__SERVER_SIDE final
 {
     public:
         /** @brief Constructor represents direct initialization of variables */
-        explicit client_connection_info__SERVER_SIDE(std::thread && _client_thread,
-                                                     ____user_id_type _client_id,
+        client_connection_info__SERVER_SIDE(std::thread && _client_thread,
                                                      int _socket_file_descriptor)
                                                      :
                                                      client_thread(std::move(_client_thread)),
-                                                     client_id(_client_id),
                                                      socket_file_descriptor(_socket_file_descriptor)
 
         {
@@ -80,11 +78,10 @@ struct client_connection_info__SERVER_SIDE final
         std::thread client_thread;
         /** @brief Client name */
         std::optional<std::string> client_name;
-        /** @brief Client id */
-        ____user_id_type client_id;
         /** @brief FD for client */
         int socket_file_descriptor;
 };
+
 
 /** @brief Struct represents info needed for client side */
 struct client_connection_info__CLIENT_SIDE final
