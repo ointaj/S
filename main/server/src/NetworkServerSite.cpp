@@ -50,7 +50,9 @@ void NetworkServerSide::client_registration()
         RES_NETWORK_CHECK_SYS_CALL(new_client.socket_fd, __error_network_accept_BIT);
         
         {
+
             std::lock_guard<std::mutex> accept_lock(_access_to_clients);
+            _name_control_handle(new_client.socket_fd);
             _clients.emplace(std::piecewise_construct,
                              std::forward_as_tuple(++_id_of_clients_offset),
                              std::forward_as_tuple(std::thread([this]() { this->_client_handle(); }), new_client.socket_fd));
@@ -130,7 +132,7 @@ void NetworkServerSide::_print_client(std::string && data)
                     {
                         if (std::nullopt != client->second.client_name)
                         {
-                            data_to_print.emplace_back(std::make_pair(client->first, client->second.client_name->c_str()));
+                            data_to_print.emplace_back(client->first, client->second.client_name->c_str());
                         }
                     }
                 }
@@ -203,3 +205,16 @@ void NetworkServerSide::_client_handle()
 {
 
 }
+
+void NetworkServerSide::_name_control_handle(int client_socket_fd)
+{
+    (void)client_socket_fd;
+    /*bool name_set_done = false;
+    while (!name_set_done)
+    {
+        std::string client_name(__maximal_name_size, '\0');
+        recv();
+        
+    }*/
+}
+

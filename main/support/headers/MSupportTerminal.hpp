@@ -178,3 +178,4 @@ class MainSupportTerminal final
         */
         inline _TERMINAL_ARGUMENTS_ && get_terminal_args() { return std::move(_term_args); }
 };
+    

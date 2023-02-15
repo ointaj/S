@@ -70,10 +70,6 @@ struct client_connection_info__SERVER_SIDE final
         client_connection_info__SERVER_SIDE& operator=(client_connection_info__SERVER_SIDE const&) = delete;
 
     public:
-
-        
-
-    public:
         /** @brief Thread handle of client */
         std::thread client_thread;
         /** @brief Client name */

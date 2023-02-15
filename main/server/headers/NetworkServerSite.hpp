@@ -38,6 +38,7 @@
 */
 
     inline constexpr int __connection_queue_max_lenght = 10;
+    inline constexpr uint16_t __maximal_name_size      = (uint16_t)35;
 
 /**
  * @brief Local/Global definitons
@@ -47,9 +48,10 @@ class NetworkServerSide final : public iNetworkBase
     private:
         /** @brief Map of client info */
         std::unordered_map<____user_id_type, client_connection_info__SERVER_SIDE> _clients;
+
         /** @brief Mutex for accesing to client info */
         std::mutex _access_to_clients;
-
+    
         /** @brief Offset for client id */
         ____user_id_type _id_of_clients_offset;
     
@@ -96,7 +98,6 @@ class NetworkServerSide final : public iNetworkBase
         void server_maintenance();
 
     private:
-        void _client_handle();
         void _exit_connected_clients(); 
     
     private:
@@ -114,7 +115,9 @@ class NetworkServerSide final : public iNetworkBase
         void _multicast_message();
     
     private:
-        void _name_control_handle();
+        void _client_handle();
+        void _name_control_handle(int client_socket_fd);
+        void _server_handle();
 
     private:
         /**
