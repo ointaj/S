@@ -50,12 +50,11 @@ void NetworkServerSide::client_registration()
         RES_NETWORK_CHECK_SYS_CALL(new_client.socket_fd, __error_network_accept_BIT);
         
         {
-
             std::lock_guard<std::mutex> accept_lock(_access_to_clients);
-            _name_control_handle(new_client.socket_fd);
+            ++_id_of_clients_offset;
             _clients.emplace(std::piecewise_construct,
-                             std::forward_as_tuple(++_id_of_clients_offset),
-                             std::forward_as_tuple(std::thread([this]() { this->_client_handle(); }), new_client.socket_fd));
+                             std::forward_as_tuple(_id_of_clients_offset),
+                             std::forward_as_tuple(std::thread([this, fd = new_client.socket_fd]() { this->_client_handle(_id_of_clients_offset, fd); }), new_client.socket_fd));
 
         }
     }
@@ -201,20 +200,63 @@ void NetworkServerSide::_exit_clients(std::string && data)
 }
 
 
-void NetworkServerSide::_client_handle()
+void NetworkServerSide::_client_handle(int client_id, int client_socket_fd)
 {
+    {
+        auto name = _name_control_handle(client_socket_fd);
+        {
+            std::lock_guard<std::mutex> lock(_access_to_clients);
+            if (auto client = _clients.find(client_id); _clients.end() != client)
+            {
+                client->second.client_name.emplace(std::move(name));
+                {
+                    std::unique_lock<std::shared_mutex> lock(_access_to_clients_name);
+                    if (std::nullopt != client->second.client_name)
+                    {
+                        _client_names.emplace_back((*client->second.client_name).c_str());
+                    }
+                    else
+                    {
+                        assert(false);
+                    }
+                }
+            }
+            else
+            {
+                assert(false);
+            }
+        }
+    }
+
 
 }
 
-void NetworkServerSide::_name_control_handle(int client_socket_fd)
+std::string NetworkServerSide::_name_control_handle(int client_socket_fd)
 {
-    (void)client_socket_fd;
-    /*bool name_set_done = false;
+    std::shared_lock<std::shared_mutex> lock(_access_to_clients_name);
+    std::array<char, __maximal_name_size> client_name;
+    bool name_set_done = false;
     while (!name_set_done)
     {
-        std::string client_name(__maximal_name_size, '\0');
-        recv();
-        
-    }*/
+        const auto recv_result = recv(client_socket_fd, client_name.data(), client_name.size(), 0);
+        (void)recv_result;
+        name_set_done = true;
+        std::string_view name(client_name.data(), client_name.size());
+        for (auto __client_name : _client_names)
+        {
+            if ((std::nullopt != __client_name)
+                && (name == (*__client_name)))
+            {
+                name_set_done = false;
+                break;
+            }
+        }
+        if (!name_set_done)
+        {
+
+        }
+    }
+
+    return {client_name.data(), client_name.size()};
 }
 

@@ -8,6 +8,8 @@
 #include <atomic>
 #include <algorithm>
 #include <memory>
+#include <array>
+#include <shared_mutex>
 
 /**
  * @brief Headers for C build-in for libraries
@@ -51,6 +53,10 @@ class NetworkServerSide final : public iNetworkBase
 
         /** @brief Mutex for accesing to client info */
         std::mutex _access_to_clients;
+        
+        std::shared_mutex _access_to_clients_name;
+
+        std::vector<std::optional<std::string_view>> _client_names;
     
         /** @brief Offset for client id */
         ____user_id_type _id_of_clients_offset;
@@ -115,8 +121,8 @@ class NetworkServerSide final : public iNetworkBase
         void _multicast_message();
     
     private:
-        void _client_handle();
-        void _name_control_handle(int client_socket_fd);
+        void _client_handle(int client_id, int client_socket_fd);
+        std::string _name_control_handle(int client_socket_fd);
         void _server_handle();
 
     private:

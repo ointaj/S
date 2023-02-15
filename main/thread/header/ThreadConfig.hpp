@@ -61,7 +61,7 @@ struct client_connection_info__SERVER_SIDE final
 
         /** @brief Move constructor - in default state */
         client_connection_info__SERVER_SIDE(client_connection_info__SERVER_SIDE &&) = default;
-        /** @brief Move assigment operator - in default state */
+
         client_connection_info__SERVER_SIDE& operator=(client_connection_info__SERVER_SIDE &&) = default;
 
         /** @brief Copy constructor - unvailble */
