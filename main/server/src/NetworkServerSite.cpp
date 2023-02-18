@@ -227,13 +227,10 @@ void NetworkServerSide::_client_handle(int client_id, int client_socket_fd)
             }
         }
     }
-
-
 }
 
 std::string NetworkServerSide::_name_control_handle(int client_socket_fd)
 {
-    std::shared_lock<std::shared_mutex> lock(_access_to_clients_name);
     std::array<char, __maximal_name_size> client_name;
     bool name_set_done = false;
     while (!name_set_done)
@@ -242,15 +239,20 @@ std::string NetworkServerSide::_name_control_handle(int client_socket_fd)
         (void)recv_result;
         name_set_done = true;
         std::string_view name(client_name.data(), client_name.size());
-        for (auto __client_name : _client_names)
+
         {
-            if ((std::nullopt != __client_name)
-                && (name == (*__client_name)))
+            std::shared_lock<std::shared_mutex> lock(_access_to_clients_name);
+            for (auto __client_name : _client_names)
             {
-                name_set_done = false;
-                break;
+                if ((std::nullopt != __client_name)
+                    && (name == (*__client_name)))
+                {
+                    name_set_done = false;
+                    break;
+                }
             }
         }
+
         if (!name_set_done)
         {
 
